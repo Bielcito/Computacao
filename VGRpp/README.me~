@@ -1,0 +1,40 @@
+----------------------------------------------------
+------------------- README v1.0 --------------------
+----------------------------------------------------
+
+piroca
+
+1) Building the code
+
+In order to build VGRpp code, you must have SDL development headers
+installed, which are very likely to be available in the main 
+repository of your distro. I myself installed them with:
+
+sudo dnf install sdl-devel
+
+Only SDL 1.2 is used, so don't bother installing version 2.0
+if you don't want to.
+Be aware that headers can eventually change location, so if
+something does not work because of SDL be sure to check the location
+of SDL.h and change it in render.cpp file (is the only file which
+#includes it).
+
+To compile, simply _make_ it.
+
+2) Running
+
+Version 1.0 will simply look for a file named blueTriangle.2d
+inside /scenes directory (this is will be changed after!). If you wanna
+test different scenes, you can modify this file.
+
+3) Creating new .2d files
+
+Guidelines for .2d files can be found in /scenes directory. Order of
+tags is CRUCIAL, so don't change it - but linebreaks between then
+are ignored.
+
+NOTES:
+
+My makefile is REALLY poorly written; make sure to contact me if
+for some reason it won't compile in your machine. When it comes to
+makefiles I can not do much, sorry. ):

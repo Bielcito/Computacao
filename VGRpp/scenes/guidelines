@@ -1,0 +1,44 @@
+This is how a .2d file should look:
+
+WINDOW <double> <double> <double> <double>      # This is what will be effectively draw in the window
+VIEWPORT <int> <int>							# This will be our window size in pixels
+
+TRANSFORM <double x9>							# Scene transformation. This is applied to all objects in scene,
+												# after the object transformations
+
+ELEMENTCOUNT <int>								# Number of elements we'll describe below
+
+_SHAPE_ <shape data>
+TRANSFORM <double x9>
+_PAINT_ <paint data>
+TRANSFORM <double x9>
+
+_SHAPE_ <shape data>
+TRANSFORM <double x9>
+_PAINT_ <paint data>
+TRANSFORM <double x9>
+
+...
+
+
+_SHAPE_ can be:
+
+	TRIANGLE : <double x6>, which are coodinates of the vertice v0, v1, v2
+
+_PAINT_ can be:
+	
+	SOLID : <unsigned char x4>, which are R G B A color channels
+
+	LINEAR : <spread> <p0> <p1> <s0> <rgba> <s1> <rgba> <s2> <rgba> ...
+			where <spread> is the type of spreading to the gradient (pad, repeat, reflect,...),
+			<p0> and <p1> are the starting and ending points for the gradient and each pair <si> <rgba>
+			is a stop point and its respective color. <si> is in the range [0, 1].
+
+	RADIAL: <spread> <center> <focus> <radius> <s0> <rgba> <s1> <rgba> ...
+			where <spread> defines how we'll spread/wrap the gradient (pad, repeat, reflect, ...),
+			<center> and <focus> are points and and each pair <si> <rgba> is a stop point and its
+			respective color.
+
+
+Further Remarks:
+	- ALPHA channel is fully opaque with value 255 and fully transparent with value 255
