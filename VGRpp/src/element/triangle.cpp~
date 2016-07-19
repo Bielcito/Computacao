@@ -15,9 +15,13 @@ void compute_implicit_line(const Vec2& p0, const Vec2& p1, double* coef)
 	// Aqui você calcula a, b e c para a equação de forma
 	// ax+by+c = 0 que passa por p0 e p1.
 
-	double a = 1.0;
-	double b = 1.0;
-	double c = 1.0;
+	Vec2 v = p1 - p0;
+	
+	Vec2 orv(-v.y(), v.x() );
+
+	double a = orv.x();
+	double b = orv.y();
+	double c = -orv.dot(p0);
 
 	coef[0] = a;
 	coef[1] = b;
@@ -49,36 +53,12 @@ bool Triangle::is_inside(double x, double y)
 	// em sentido horário/anti-horário, o ponto vai estar à
 	// à direita ou à esquerda de todas as retas ao mesmo tempo.
 
-	//retas:
-	Vec2 v0, v1, v2;
-	v0 = p1 - p0;
-	v1 = p2 - p1;
-	v2 = p0 - p2;
 
-	//ortogonais às retas:
-	Vec2 orv0( v0.y()*-1, v0.x() );
-	Vec2 orv1( v1.y()*-1, v1.x() );
-	Vec2 orv2( v2.y()*-1, v2.x() );
+	double line1 = edge[0]*x + edge[1]*y + edge[2];
+	double line2 = edge[3]*x + edge[4]*y + edge[5];
+	double line3 = edge[6]*x + edge[7]*y + edge[8];
 
-	Vec2 Q(x, y);
-
-	//retas para o ponto:
-	Vec2 p0x = p0 - Q;
-	Vec2 p1x = p1 - Q;
-	Vec2 p2x = p2 - Q;
-
-	//ortogonais:
-	double ort0 = orv0.dot(p0x);
-	double ort1 = orv1.dot(p1x);
-	double ort2 = orv2.dot(p2x);
-
-	if( ort0 * ort1 > 0 && ort1 * ort2 > 0 )
-	{
-		return true;
-	}
-	
-
-	return false;
+	return ( Numeric::sign(line1) == Numeric::sign(line2) && Numeric::sign(line2) == Numeric::sign(line3) );
 }
 
 void Triangle::set_modelxf(const Matrix3& model_xf)
@@ -116,9 +96,26 @@ void Triangle::implicitize()
 	// "lembrar" onde os pontos estavam originalmente (isto é, precisamos
 	// saber as coordenadas dos pontos tal como foram definidos no arquivo .2d)
 	
-	Vec2 p0_t = p0;
-	Vec2 p1_t = p1;
-	Vec2 p2_t = p2;
+	Vec2 p0_t;
+	Vec2 p1_t;
+	Vec2 p2_t;
+	
+	Vec3 aux_p0 = p0.homogeneous();
+	Vec3 aux_p1 = p1.homogeneous();
+	Vec3 aux_p2 = p2.homogeneous();
+
+	Vec3 model_p0 = model_xf.apply(aux_p0);
+	Vec3 model_p1 = model_xf.apply(aux_p1);
+	Vec3 model_p2 = model_xf.apply(aux_p2);
+
+	Vec3 scene_p0 = scene_xf.apply(model_p0);
+	Vec3 scene_p1 = scene_xf.apply(model_p1);
+	Vec3 scene_p2 = scene_xf.apply(model_p2);
+
+	p0_t = scene_p0.euclidian();
+	p1_t = scene_p1.euclidian();
+	p2_t = scene_p2.euclidian();
+
 
 	// Uma vez que os pontos foram transformados, podemos
 	// calcular a equação implícita para cada uma das arestas.
