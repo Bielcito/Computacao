@@ -96,25 +96,16 @@ void Triangle::implicitize()
 	// "lembrar" onde os pontos estavam originalmente (isto é, precisamos
 	// saber as coordenadas dos pontos tal como foram definidos no arquivo .2d)
 	
-	Vec2 p0_t;
-	Vec2 p1_t;
-	Vec2 p2_t;
-	
-	Vec3 aux_p0 = p0.homogeneous();
-	Vec3 aux_p1 = p1.homogeneous();
-	Vec3 aux_p2 = p2.homogeneous();
+/*	Vec2 p0_t = scene_xf.apply( model_xf.apply( p0.homogeneous() ) ).euclidean();
+	Vec2 p1_t = scene_xf.apply( model_xf.apply( p1.homogeneous() ) ).euclidean();
+	Vec2 p2_t = scene_xf.apply( model_xf.apply( p2.homogeneous() ) ).euclidean();*/
 
-	Vec3 model_p0 = model_xf.apply(aux_p0);
-	Vec3 model_p1 = model_xf.apply(aux_p1);
-	Vec3 model_p2 = model_xf.apply(aux_p2);
+	//Outra resposta:
+	Matrix3 T = scene_xf * model_xf;
 
-	Vec3 scene_p0 = scene_xf.apply(model_p0);
-	Vec3 scene_p1 = scene_xf.apply(model_p1);
-	Vec3 scene_p2 = scene_xf.apply(model_p2);
-
-	p0_t = scene_p0.euclidian();
-	p1_t = scene_p1.euclidian();
-	p2_t = scene_p2.euclidian();
+	Vec2 p0_t = T.apply( p0.homogeneous() ).euclidean();
+	Vec2 p1_t = T.apply( p1.homogeneous() ).euclidean();
+	Vec2 p2_t = T.apply( p2.homogeneous() ).euclidean();
 
 
 	// Uma vez que os pontos foram transformados, podemos

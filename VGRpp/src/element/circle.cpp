@@ -42,9 +42,23 @@ bool Circle::is_inside(double x, double y)
 	// a representação matricial do círculo/elipse, como veremos
 	// superficialmente depois.
 
-	double expression = ( x - center.x() ) * ( x - center.x() ) + ( y - center.y() ) * ( y - center.y() );
+	Vec2 pObj(x, y);
 
-	if( expression <= radius*radius )
+	Matrix3 T = scene_xf * model_xf * T.translate(*(new Vec2(1,0))) * T.scale(0.5, 0.5);
+	T = T.inv();
+
+	Vec3 pObjH;
+
+	pObjH = pObj.homogeneous();
+
+	pObjH = T.apply(pObjH);
+
+	pObj = pObjH.euclidean();
+
+	double dx = pObj.x() - center.x();
+	double dy = pObj.y() - center.y();
+
+	if( dx*dx + dy*dy <= radius*radius )
 	{
 		return true;
 	}
