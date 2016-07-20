@@ -1,4 +1,7 @@
 #include "../../../inc/element/path/quadratic.h"
+#include "../../../inc/vector/numeric.h"
+#include <iostream>
+using namespace std;
 
 void Quadratic::setAABB()
 {
@@ -58,6 +61,19 @@ int Quadratic::to_the_left(const Vec2& p)
 		if(p.x() <= min.x()) return dy;
 		if(p.x() > max.x()) return 0;
 
+		Numeric aux;
+		double a, b;
+		aux.quadratic( 
+						(p0.y() - 2 * p1.y() + p2.y()), 
+						(-2 * p0.y() + 2 * p1.y()), 
+						(p0.y() - p.y()), 
+						a, 
+						b
+					);
+
+		double t = (a >= 0 && a <= 1) ? a : b;
+		double x_inter = Numeric::bezier2_at(t, p0.x(), p1.x(), p2.x());
+
 		// Comece verificando em que parâmetro t y(t) é igual
 		// a p.y(). Depois, ache x(t) e retorne +1/-1 se
 		// p.x() estiver à esquerda.
@@ -66,7 +82,6 @@ int Quadratic::to_the_left(const Vec2& p)
 		//
 		// Lembre que no cabeçalho inc/vector/numeric.h tem algumas funções
 		// que podem ser úteis. Verifique!
-		double x_inter = 0;
 
 		return (p.x() <= x_inter) ? dy : 0;
 	}

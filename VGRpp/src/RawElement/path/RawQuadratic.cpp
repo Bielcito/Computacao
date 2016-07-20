@@ -1,4 +1,6 @@
 #include "../../../inc/RawElement/path/RawQuadratic.h"
+#include <iostream>
+using namespace std;
 
 void RawQuadratic::cut_at(double t0, double t1, Quadratic& out)
 {
@@ -49,7 +51,53 @@ void RawQuadratic::preprocess(std::vector<Primitive*>& holder)
 	// dF/dt = 0, e que temos duas funções de uma variável:
 	// ( x(t), y(t) ). Como cada função é quadrática, a derivada
 	// será uma função linear (at+b).
+
 	Vec2 a, b; double t[] = {0.0, -1.0, -1.0, 1.0};
+
+	double x0, x1;
+	double y0, y1;
+	Numeric aux;
+
+	double T = ( p0.y() - p1.y() ) / ( p0.y() - 2 * p1.y() + p2.y() );
+
+
+	if(T >= 0 && T <= 1)
+	{
+		Quadratic* quadA = new Quadratic();
+		Quadratic* quadB = new Quadratic();
+
+		cut_at(0, T, *quadA);
+		cut_at(T, 1, *quadB);
+
+		holder.push_back(quadA);
+		holder.push_back(quadB);
+	}
+	else
+	{
+		Quadratic* quadA = new Quadratic(p0, p1, p2);
+
+		holder.push_back(quadA);
+	}
+	//holder.push_back(*a);
+	//holder.push_back(*b);
+
+	//bazier quadrática:
+	//(1-t)*(1-t)*p0.y() + 2*(1-t)*t*p1.y() + 2*t*(p2.y() - p1.y())
+
+	//derivada bazier quadrática:
+	//2*(1-t)*(p1.y() - p0.y()) + 2*t*(p2.y() - p1.y())
+
+	//achar raízes da derivada da função bazier quadrática vai indicar que há uma mudança de sinal e a função deverá ser cortada nesse ponto.
+	//resolvendo, dá:
+
+
+	/*
+
+	aux.quadratic(p0.x(), p1.x(), p2.x(), x0, x1);
+	aux.quadratic(p0.y(), p1.y(), p2.y(), y0, y1);
+
+	cout << x0 << " " << x1 << endl;
+	cout << y0 << " " << y1 << endl;*/
 
 	// t deve conter os pontos de mudança de sinal em t[1] e t[2].
 	// Agora, invoque a função cut_at() para cortar a curva em
